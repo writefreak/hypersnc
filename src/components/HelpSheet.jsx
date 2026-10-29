@@ -21,7 +21,10 @@ export default function HelpSheet({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-center" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-center"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
@@ -31,7 +34,11 @@ export default function HelpSheet({ open, onClose }) {
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Connection help</h2>
-          <button aria-label="Close help" onClick={onClose} className="rounded-full p-2 hover:bg-ink/5">
+          <button
+            aria-label="Close help"
+            onClick={onClose}
+            className="rounded-full p-2 hover:bg-ink/5"
+          >
             <X className="size-5" />
           </button>
         </div>
@@ -43,7 +50,9 @@ export default function HelpSheet({ open, onClose }) {
             </li>
           ))}
         </ul>
-        <Button full className="mt-6" onClick={onClose}>Got it</Button>
+        <Button full className="mt-6" onClick={onClose}>
+          Got it
+        </Button>
       </div>
     </div>
   );

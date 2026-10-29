@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
 
   --color-accent: #a3e635;
   --color-accent-strong: #84cc16;
@@ -23,5 +24,27 @@
   :focus-visible {
     outline: 3px solid var(--color-ink);
     outline-offset: 2px;
+  }
+}
+
+@keyframes parallax-shift {
+  from {
+    transform: translateY(-8%);
+  }
+  to {
+    transform: translateY(8%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .parallax-img {
+    animation: parallax-shift linear both;
+    animation-timeline: view();
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax-img {
+    animation: none;
   }
 }
