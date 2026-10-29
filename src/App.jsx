@@ -1,10 +1,12 @@
 import { useState } from "react";
+import Landing from "./pages/Landing.jsx";
 import Home from "./screens/Home.jsx";
 import PairSend from "./screens/PairSend.jsx";
 import PairReceive from "./screens/PairReceive.jsx";
 import Transfer from "./screens/Transfer.jsx";
+import { TOOL_PATH } from "./config.js";
 
-export default function App() {
+function Tool() {
   const [screen, setScreen] = useState("home");
   const goHome = () => setScreen("home");
   const goTransfer = () => setScreen("transfer");
@@ -19,4 +21,9 @@ export default function App() {
     default:
       return <Home onSend={() => setScreen("send")} onReceive={() => setScreen("receive")} />;
   }
+}
+
+export default function App() {
+  const isTool = window.location.pathname.startsWith(TOOL_PATH);
+  return isTool ? <Tool /> : <Landing />;
 }
