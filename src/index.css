@@ -48,3 +48,72 @@
     animation: none;
   }
 }
+
+.notch-card {
+  --n: 4rem; /* notch size */
+  --r: 1.25rem; /* radius of the notch corners */
+
+  -webkit-mask:
+    linear-gradient(#000, #000) left 0 top 0 /
+      calc(100% - var(--n) - var(--r) + 1px) 100% no-repeat,
+    linear-gradient(#000, #000) right var(--n) top calc(var(--r) - 1px) /
+      var(--r) calc(100% - var(--r) + 1px) no-repeat,
+    radial-gradient(
+        circle at 0 100%,
+        #000 calc(var(--r) - 0.5px),
+        transparent var(--r)
+      )
+      right var(--n) top 0 / var(--r) var(--r) no-repeat,
+    linear-gradient(#000, #000) right 0 bottom 0 / calc(var(--n) + 1px)
+      calc(100% - var(--n) - var(--r) + 1px) no-repeat,
+    linear-gradient(#000, #000) right var(--r) top var(--n) /
+      calc(var(--n) - var(--r) + 1px) var(--r) no-repeat,
+    radial-gradient(
+        circle at 1px 100%,
+        #000 calc(var(--r) - 0.5px),
+        transparent var(--r)
+      )
+      right 0 top var(--n) / calc(var(--r) + 1px) var(--r) no-repeat,
+    radial-gradient(
+        circle at 100% 0,
+        transparent calc(var(--r) - 0.5px),
+        #000 var(--r)
+      )
+      right calc(var(--n) - var(--r)) top calc(var(--n) - var(--r)) /
+      calc(var(--r) + 1px) calc(var(--r) + 1px) no-repeat;
+  mask:
+    linear-gradient(#000, #000) left 0 top 0 /
+      calc(100% - var(--n) - var(--r) + 1px) 100% no-repeat,
+    linear-gradient(#000, #000) right var(--n) top calc(var(--r) - 1px) /
+      var(--r) calc(100% - var(--r) + 1px) no-repeat,
+    radial-gradient(
+        circle at 0 100%,
+        #000 calc(var(--r) - 0.5px),
+        transparent var(--r)
+      )
+      right var(--n) top 0 / var(--r) var(--r) no-repeat,
+    linear-gradient(#000, #000) right 0 bottom 0 / calc(var(--n) + 1px)
+      calc(100% - var(--n) - var(--r) + 1px) no-repeat,
+    linear-gradient(#000, #000) right var(--r) top var(--n) /
+      calc(var(--n) - var(--r) + 1px) var(--r) no-repeat,
+    radial-gradient(
+        circle at 1px 100%,
+        #000 calc(var(--r) - 0.5px),
+        transparent var(--r)
+      )
+      right 0 top var(--n) / calc(var(--r) + 1px) var(--r) no-repeat,
+    radial-gradient(
+        circle at 100% 0,
+        transparent calc(var(--r) - 0.5px),
+        #000 var(--r)
+      )
+      right calc(var(--n) - var(--r)) top calc(var(--n) - var(--r)) /
+      calc(var(--r) + 1px) calc(var(--r) + 1px) no-repeat;
+}
+
+@media (min-width: 1536px) {
+  .notch-card {
+    --n: 5rem;
+    --r: 1.5rem;
+  }
+}

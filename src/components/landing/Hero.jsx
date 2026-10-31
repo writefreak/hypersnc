@@ -90,9 +90,9 @@ const PROMISES = ["No app to install", "No account", "No ads"];
 
 export default function Hero() {
   return (
-    <section className="overflow-hidden bg-[#E9EEFB] text-[#12141F]">
-      <Container className="grid items-center gap-12 py-12 md:py-16 md:grid-cols-[1fr_1.05fr]">
-        {/* Copy */}
+    <section className="bg-[#E9EEFB] text-[#12141F]">
+      {/* Copy */}
+      <Container className="grid bg-[#E9EEFB] items-center gap-12 py-12 md:py-16 md:grid-cols-[1fr_1.05fr]">
         <div className="space-y-7">
           <h1 className="text-4xl font-extrabold leading-[1.02] tracking-tight md:text-6xl 2xl:text-7xl">
             Send files between any two phones without internet

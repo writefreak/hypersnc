@@ -11,11 +11,11 @@ import Footer from "../components/landing/Footer.jsx";
 
 export default function Landing() {
   return (
-    <>
+    <div className="bg-[#E9EEFB]">
       <Navbar />
       <main>
         <Hero />
-        <FileTypes />
+        {/* <FileTypes /> */}
         <HowItWorks />
         <Benefits />
         <Limits />
@@ -23,6 +23,6 @@ export default function Landing() {
         <CtaBand />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
