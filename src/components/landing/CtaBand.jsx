@@ -81,22 +81,17 @@ export default function CtaBand() {
             className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-accent/20 blur-3xl 2xl:size-[32rem]"
           />
 
-          <div className="relative space-y-7 2xl:space-y-9">
-            <h2 className="text-3xl font-extrabold leading-[1.05] tracking-tight md:text-3xl lg:text-5xl 2xl:text-6xl">
-              Open the tool and send your first file
-            </h2>
+          <div className="relative space-y-7 md:space-y-8 2xl:space-y-9">
+            <div className="space-y-3">
+              <h2 className="text-3xl font-extrabold leading-[1.05] tracking-tight md:text-3xl lg:text-5xl 2xl:text-6xl">
+                Open the tool and send your first file
+              </h2>
 
-            <ul className="flex flex-col gap-4 md:flex-row text-sm font-medium text-white/80 2xl:text-lg">
-              {PROMISES.map((item) => (
-                <li key={item} className="flex items-center gap-1">
-                  <Check
-                    className="size-4 text-accent 2xl:size-5"
-                    strokeWidth={3}
-                  />
-                  {item}
-                </li>
-              ))}
-            </ul>
+              <span className="text-xs md:text-sm text-white/70 2xl:text-base">
+                No account, no ads, no tracking. Just open the tool and send
+                files between any two phones without internet.
+              </span>
+            </div>
 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
               <LinkButton

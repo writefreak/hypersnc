@@ -9,6 +9,7 @@ import {
 import { Ban, Smartphone, WifiOff } from "lucide-react";
 import Container from "../layout/Container.jsx";
 import SectionHeading from "./SectionHeading.jsx";
+import hero from "../../public/hero.jpg";
 
 const BENEFITS = [
   {
@@ -86,6 +87,7 @@ function BenefitItem({ benefit, threshold, fill, reduceMotion, isLast }) {
 export default function Benefits() {
   const reduceMotion = useReducedMotion();
   const listRef = useRef(null);
+  const sectionRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
     target: listRef,
@@ -97,8 +99,43 @@ export default function Benefits() {
     restDelta: 0.001,
   });
 
+  // Background image parallax, tracks the section as it passes through the screen
+  const { scrollYProgress: sectionProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const smoothSection = useSpring(sectionProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+  const bgY = useTransform(
+    smoothSection,
+    [0, 1],
+    reduceMotion ? ["0%", "0%"] : ["-7%", "7%"],
+  );
+
   return (
-    <section id="why" className="scroll-mt-20 bg-[#E9EEFB] py-16 lg:py-28">
+    <section
+      ref={sectionRef}
+      id="why"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-[#E9EEFB] py-16 lg:py-28"
+    >
+      {/* Parallax background image */}
+      <motion.img
+        src={hero}
+        alt=""
+        aria-hidden="true"
+        style={{ y: bgY }}
+        className="absolute inset-x-0 -top-[20%] -z-20 h-[140%] w-full object-cover object-center opacity-70 will-change-transform"
+      />
+
+      {/* Left to right fade of the old background color */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#E9EEFB] via-[#E9EEFB]/80 to-transparent"
+      />
+
       <Container className="space-y-12 2xl:space-y-16">
         <div className="mx-auto max-w-2xl text-center">
           <SectionHeading title="Why use this tool?" />

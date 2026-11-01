@@ -12,10 +12,12 @@ import Container from "../layout/Container.jsx";
 import LinkButton from "../ui/LinkButton.jsx";
 import { TOOL_PATH } from "../../config.js";
 import phone from "../../public/phone.jpg";
+import hero from "../../public/hero.jpg";
 import { useRef } from "react";
 import {
   motion,
   useScroll,
+  useSpring,
   useTransform,
   useReducedMotion,
 } from "framer-motion";
@@ -89,10 +91,44 @@ function ParallaxImage({ className }) {
 const PROMISES = ["No app to install", "No account", "No ads"];
 
 export default function Hero() {
+  const ref = useRef(null);
+  const reduceMotion = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const smooth = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+  const bgY = useTransform(
+    smooth,
+    [0, 1],
+    reduceMotion ? ["0%", "0%"] : ["0%", "20%"],
+  );
+
   return (
-    <section className="bg-[#E9EEFB] text-[#12141F]">
-      {/* Copy */}
-      <Container className="grid bg-[#E9EEFB] items-center gap-12 py-8 md:py-10 md:grid-cols-[1fr_1.05fr]">
+    <section
+      ref={ref}
+      className="relative isolate overflow-hidden bg-[#E9EEFB] text-[#12141F]"
+    >
+      {/* Parallax background image */}
+      <motion.img
+        src={hero}
+        alt=""
+        aria-hidden="true"
+        style={{ y: bgY }}
+        className="absolute inset-x-0 bottom-0 -z-20 h-[130%] w-full object-cover object-center oopacity-50 md:pacity-70 will-change-transform"
+      />
+
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-linear-to-r from-[#E9EEFB] via-[#E9EEFB]/40 md:via-[#E9EEFB]/80 to-transparent"
+      />
+
+      <Container className="grid items-center gap-12 pb-8 pt-[6.75rem] md:grid-cols-[1fr_1.05fr] md:pb-10 md:pt-[7.25rem] 2xl:pt-36">
         <div className="space-y-7 md:space-y-4">
           <h1 className="text-4xl font-extrabold leading-[1.02] tracking-tight md:text-6xl 2xl:text-7xl">
             Send files between any two phones without internet
@@ -121,7 +157,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Phone image */}
         <ParallaxImage className="relative hidden h-[450px] w-full overflow-hidden rounded-4xl border-2 border-[#12141F] bg-white md:block" />
       </Container>
     </section>

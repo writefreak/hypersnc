@@ -32,7 +32,7 @@ export default function Navbar() {
       initial={reduceMotion ? false : { y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="pointer-events-none sticky top-0 z-20 pt-3 2xl:pt-6"
+      className="pointer-events-none fixed inset-x-0 top-0 z-20 pt-3 2xl:pt-6"
     >
       <Container>
         <div className="pointer-events-auto relative ">
