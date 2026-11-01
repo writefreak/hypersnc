@@ -92,13 +92,13 @@ export default function Hero() {
   return (
     <section className="bg-[#E9EEFB] text-[#12141F]">
       {/* Copy */}
-      <Container className="grid bg-[#E9EEFB] items-center gap-12 py-12 md:py-16 md:grid-cols-[1fr_1.05fr]">
-        <div className="space-y-7">
+      <Container className="grid bg-[#E9EEFB] items-center gap-12 py-12 md:py-10 md:grid-cols-[1fr_1.05fr]">
+        <div className="space-y-7 md:space-y-4">
           <h1 className="text-4xl font-extrabold leading-[1.02] tracking-tight md:text-6xl 2xl:text-7xl">
             Send files between any two phones without internet
           </h1>
 
-          <p className="max-w-xl text-sm md:text-base leading-relaxed text-[#12141F]/70 2xl:text-xl">
+          <p className="max-w-xl text-sm  leading-relaxed text-[#12141F]/70 2xl:text-xl">
             Share Photos, videos, PDFs, music and APK files straight from one
             phone to the other, even without signal or data.
           </p>
@@ -122,7 +122,7 @@ export default function Hero() {
         </div>
 
         {/* Phone image */}
-        <ParallaxImage className="relative hidden h-[500px] w-full overflow-hidden rounded-[2rem] border-2 border-[#12141F] bg-white md:block" />
+        <ParallaxImage className="relative hidden h-[450px] w-full overflow-hidden rounded-4xl border-2 border-[#12141F] bg-white md:block" />
       </Container>
     </section>
   );
