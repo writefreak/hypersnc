@@ -1,28 +1,146 @@
+import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { Film, Sun, Wifi } from "lucide-react";
 import Container from "../layout/Container.jsx";
 import SectionHeading from "./SectionHeading.jsx";
 
 const LIMITS = [
-  { title: "Very large videos on iPhone", description: "iPhones hold a received file in memory before saving it, so files over about 1 GB may fail. Send large files to an Android phone instead." },
-  { title: "Keep both screens on", description: "Locking a phone can pause the transfer. The tool asks the screen to stay awake, but it is safest to leave it on." },
-  { title: "Same network needed", description: "Both phones must share a hotspot or Wi-Fi network. If pairing fails, make the other phone the hotspot and try again." },
-  { title: "One visit with internet", description: "The first time you open the site, it needs internet to save itself. Every visit after that works offline." },
+  {
+    icon: Film,
+    title: "Very large videos on iPhone",
+    description:
+      "Send large files to an Android phone instead because files over about 1 GB may fail when being sent to Iphones.",
+  },
+  {
+    icon: Sun,
+    title: "Keep both screens on",
+    description:
+      "Locking a phone can pause the transfer. The tool asks the screen to stay awake, but it's safest to leave it on.",
+  },
+  {
+    icon: Wifi,
+    title: "Same network needed",
+    description:
+      "Both phones must share a hotspot or Wi-Fi network. If pairing fails, make the other phone the hotspot and try again.",
+  },
 ];
 
-export default function Limits() {
+function LimitItem({ limit, threshold, fill, reduceMotion, isLast }) {
+  const Icon = limit.icon;
+
+  // Lights up as the fill reaches this item's position on the line
+  const lit = useTransform(fill, [threshold - 0.15, threshold], [0, 1]);
+  const textOpacity = useTransform(
+    fill,
+    [threshold - 0.25, threshold],
+    [0.35, 1],
+  );
+  const textY = useTransform(fill, [threshold - 0.25, threshold], [16, 0]);
+  const nodeScale = useTransform(
+    fill,
+    [threshold - 0.15, threshold],
+    [1, 1.12],
+  );
+
   return (
-    <section className="py-16 lg:py-28">
-      <Container className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
-        <SectionHeading title="What to know before you start">
-          A few honest limits, so nothing surprises you mid-transfer.
-        </SectionHeading>
-        <dl className="space-y-6">
-          {LIMITS.map(({ title, description }) => (
-            <div key={title} className="rounded-2xl border border-line bg-surface p-5">
-              <dt className="font-bold">{title}</dt>
-              <dd className="mt-1 leading-relaxed text-muted">{description}</dd>
-            </div>
+    <li
+      className={`relative flex gap-5 md:flex-col md:items-center md:gap-6 md:px-6 md:text-center 2xl:px-10 ${
+        isLast ? "" : "pb-12 md:pb-0"
+      }`}
+    >
+      {/* Node */}
+      <motion.span
+        style={reduceMotion ? undefined : { scale: nodeScale }}
+        className="relative z-10 grid size-12 shrink-0 place-items-center rounded-xl bg-white text-ink/40 shadow-sm ring-8 ring-paper 2xl:size-16"
+      >
+        <Icon className="size-6 2xl:size-7" strokeWidth={1.75} />
+        <motion.span
+          style={{ opacity: reduceMotion ? 1 : lit }}
+          className="absolute inset-0 grid place-items-center rounded-xl bg-accent-strong text-white"
+        >
+          <Icon className="size-6 2xl:size-7" strokeWidth={1.75} />
+        </motion.span>
+      </motion.span>
+
+      {/* Text */}
+      <motion.div
+        style={reduceMotion ? undefined : { opacity: textOpacity, y: textY }}
+        className="max-w-sm pt-1 md:pt-0 2xl:max-w-md"
+      >
+        <h3 className="mb-2 text-lg font-bold tracking-tight text-ink lg:text-xl 2xl:text-2xl">
+          {limit.title}
+        </h3>
+        <p className="text-sm leading-relaxed text-muted md:text-base 2xl:text-lg">
+          {limit.description}
+        </p>
+      </motion.div>
+    </li>
+  );
+}
+
+export default function Limits() {
+  const reduceMotion = useReducedMotion();
+  const listRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: listRef,
+    offset: ["start 75%", "end 55%"],
+  });
+  const fill = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 28,
+    restDelta: 0.001,
+  });
+
+  return (
+    <section className="bg-paper py-16 lg:py-28">
+      <Container className="space-y-12 2xl:space-y-16">
+        <div className="mx-auto max-w-2xl text-center">
+          <SectionHeading title="What to know before you start" />
+        </div>
+        <ol
+          ref={listRef}
+          className="relative mx-auto grid max-w-6xl md:grid-cols-3 2xl:max-w-7xl"
+        >
+          {/* Horizontal track (md and up), from first node to last node */}
+          <div
+            aria-hidden="true"
+            className="absolute left-[16.667%] right-[16.667%] top-7 hidden h-0.5 bg-ink/15 md:block 2xl:top-8"
+          >
+            <motion.div
+              style={{ scaleX: reduceMotion ? 1 : fill }}
+              className="h-full origin-left bg-accent-strong"
+            />
+          </div>
+
+          {/* Vertical track (mobile only) */}
+          <div
+            aria-hidden="true"
+            className="absolute bottom-7 left-7 top-7 w-0.5 -translate-x-1/2 bg-ink/15 md:hidden"
+          >
+            <motion.div
+              style={{ scaleY: reduceMotion ? 1 : fill }}
+              className="h-full origin-top bg-accent-strong"
+            />
+          </div>
+
+          {LIMITS.map((limit, i) => (
+            <LimitItem
+              key={limit.title}
+              limit={limit}
+              threshold={i / (LIMITS.length - 1)}
+              fill={fill}
+              reduceMotion={reduceMotion}
+              isLast={i === LIMITS.length - 1}
+            />
           ))}
-        </dl>
+        </ol>
       </Container>
     </section>
   );
