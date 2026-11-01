@@ -19,7 +19,7 @@ export default function Landing() {
         <HowItWorks />
         <Benefits />
         <Limits />
-        <Faq />
+        {/* <Faq /> */}
         <CtaBand />
       </main>
       <Footer />
