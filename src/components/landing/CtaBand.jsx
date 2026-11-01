@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Check, FileText, Smartphone } from "lucide-react";
+import { Check, Download, FileText, Send, Smartphone } from "lucide-react";
 import Container from "../layout/Container.jsx";
 import LinkButton from "../ui/LinkButton.jsx";
 import { TOOL_PATH } from "../../config.js";
@@ -73,33 +73,48 @@ export default function CtaBand() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative mx-auto grid max-w-4xl items-center gap-10 overflow-hidden rounded-[2rem] bg-ink p-8 text-white md:p-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:p-16 2xl:max-w-7xl 2xl:gap-20 2xl:p-24"
+          className="relative mx-auto flex max-w-4xl flex-col items-center overflow-hidden rounded-[2rem] bg-ink p-8 text-center text-white md:p-12 lg:p-16 2xl:max-w-7xl 2xl:p-24"
         >
-          {/* Soft glow behind the visual */}
-          <div
+          {/* Soft glow, top left */}
+          {/* <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-accent/20 blur-3xl 2xl:size-[32rem]"
-          />
+            className="pointer-events-none absolute -left-24 -top-24 size-96 rounded-full bg-accent/20 blur-3xl 2xl:size-[32rem]"
+          /> */}
 
-          <div className="relative space-y-7 md:space-y-8 2xl:space-y-9">
+          {/* Soft glow, bottom right */}
+          {/* <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-24 -right-24 size-96 rounded-full bg-accent/20 blur-3xl 2xl:size-[32rem]"
+          /> */}
+
+          <div className="relative flex w-full flex-col md:items-center space-y-7 md:space-y-8 2xl:space-y-9">
             <div className="space-y-3">
-              <h2 className="text-3xl font-extrabold leading-[1.05] tracking-tight md:text-3xl lg:text-5xl 2xl:text-6xl">
-                Open the tool and send your first file
+              <h2 className="md:mx-auto max-w-xl text-3xl font-extrabold leading-[1.05] tracking-tight md:text-3xl lg:text-5xl 2xl:max-w-4xl 2xl:text-6xl">
+                Open the tool to send or receive your first file
               </h2>
 
-              <span className="text-xs md:text-sm text-white/70 2xl:text-base">
-                No account, no ads, no tracking. Just open the tool and send
-                files between any two phones without internet.
-              </span>
+              <p className="mx-auto max-w-xs md:text-base text-xs text-white/70 2xl:max-w-2xl 2xl:text-base">
+                Just open the tool to send or receive files between any two
+                phones without internet.
+              </p>
             </div>
 
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:justify-center 2xl:gap-4 md:pt-2">
               <LinkButton
                 href={TOOL_PATH}
-                className="min-h-14 gap-2 bg-accent px-8 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5 active:translate-y-0 2xl:min-h-16 2xl:px-10 2xl:text-xl"
+                className="min-h-14 w-full gap-2 bg-accent px-8 text-lg font-semibold text-ink transition-transform hover:-translate-y-0.5 active:translate-y-0 sm:w-auto 2xl:min-h-16 2xl:px-10 2xl:text-xl"
               >
-                Open the tool
-                <ArrowUpRight className="size-5 2xl:size-6" />
+                <Send className="size-5 2xl:size-6" strokeWidth={2} />
+                Send files
+              </LinkButton>
+
+              <LinkButton
+                href={TOOL_PATH}
+                variant="secondary"
+                className="min-h-14 w-full gap-2 border-2 border-white/25 bg-transparent px-8 text-lg font-semibold text-white transition-transform hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 sm:w-auto 2xl:min-h-16 2xl:px-10 2xl:text-xl"
+              >
+                <Download className="size-5 2xl:size-6" strokeWidth={2} />
+                Receive files
               </LinkButton>
             </div>
           </div>

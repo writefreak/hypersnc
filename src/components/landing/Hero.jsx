@@ -120,7 +120,7 @@ export default function Hero() {
         alt=""
         aria-hidden="true"
         style={{ y: bgY }}
-        className="absolute inset-x-0 bottom-0 -z-20 h-[130%] w-full object-cover object-center oopacity-50 md:pacity-70 will-change-transform"
+        className="absolute inset-x-0 bottom-0 -z-20 h-[130%] w-full object-cover object-center opacity-10 md:opacity-20 will-change-transform"
       />
 
       <div

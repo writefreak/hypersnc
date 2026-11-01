@@ -127,7 +127,7 @@ export default function Benefits() {
         alt=""
         aria-hidden="true"
         style={{ y: bgY }}
-        className="absolute inset-x-0 -top-[20%] -z-20 h-[140%] w-full object-cover object-center opacity-70 will-change-transform"
+        className="absolute inset-x-0 -top-[20%] -z-20 h-[140%] w-full object-cover object-center opacity-20 will-change-transform"
       />
 
       {/* Left to right fade of the old background color */}
