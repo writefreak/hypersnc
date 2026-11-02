@@ -8,6 +8,13 @@ import {
 
 const RTC_CONFIG = { iceServers: [] };
 
+export function logCandidates(label, description) {
+  const lines = description.sdp
+    .split("\r\n")
+    .filter((l) => l.startsWith("a=candidate"));
+  console.log(label, lines);
+}
+
 export default function usePeer() {
   const pcRef = useRef(null);
   const lockRef = useRef(false);
@@ -32,13 +39,16 @@ export default function usePeer() {
     setStatus("idle");
   }, []);
 
-  const bindChannel = useCallback((ch) => {
+  // CHANGED: takes pc, and ignores events from connections that are no longer current
+  const bindChannel = useCallback((ch, pc) => {
     ch.binaryType = "arraybuffer";
     ch.onopen = () => {
+      if (pcRef.current !== pc) return;
       setChannel(ch);
       setStatus("connected");
     };
     ch.onclose = () => {
+      if (pcRef.current !== pc) return;
       setChannel(null);
       setStatus("disconnected");
     };
@@ -48,6 +58,7 @@ export default function usePeer() {
     pcRef.current?.close();
     const pc = new RTCPeerConnection(RTC_CONFIG);
     pc.onconnectionstatechange = () => {
+      if (pcRef.current !== pc) return; // CHANGED: stale guard
       if (pc.connectionState === "failed") {
         fail("Could not connect. Try making the other phone the hotspot.");
       }
@@ -65,10 +76,11 @@ export default function usePeer() {
       setStatus("preparing");
       await primeCameraPermission();
       pc = createConnection();
-      bindChannel(pc.createDataChannel("files"));
+      bindChannel(pc.createDataChannel("files"), pc); // CHANGED: passes pc
       await pc.setLocalDescription(await pc.createOffer());
       await waitForIce(pc);
       if (pcRef.current !== pc) return;
+      logCandidates("MY candidates", pc.localDescription);
       setLocalCode(encodeDescription(pc.localDescription));
       setStatus("waiting");
     } catch {
@@ -81,18 +93,23 @@ export default function usePeer() {
     async (code) => {
       if (lockRef.current) return;
       lockRef.current = true;
+      let pc; // CHANGED: declared outside try so catch can compare it
       try {
         setError("");
         setStatus("preparing");
-        const pc = createConnection();
-        pc.ondatachannel = (event) => bindChannel(event.channel);
+        pc = createConnection();
+        pc.ondatachannel = (event) => bindChannel(event.channel, pc); // CHANGED
         await pc.setRemoteDescription(decodeDescription(code));
+        logCandidates("PEER candidates", pc.remoteDescription);
         await pc.setLocalDescription(await pc.createAnswer());
         await waitForIce(pc);
+        if (pcRef.current !== pc) return; // CHANGED: stale guard
+        logCandidates("MY candidates", pc.localDescription);
         setLocalCode(encodeDescription(pc.localDescription));
         setStatus("waiting");
       } catch {
-        fail("That code could not be read. Scan the sender's code again.");
+        if (pcRef.current === pc || !pc)
+          fail("That code could not be read. Scan the sender's code again.");
       }
     },
     [bindChannel, createConnection, fail],
@@ -105,6 +122,7 @@ export default function usePeer() {
       try {
         setStatus("connecting");
         await pcRef.current.setRemoteDescription(decodeDescription(code));
+        logCandidates("PEER candidates", pcRef.current.remoteDescription);
       } catch {
         fail("That reply code could not be read. Scan it again.");
       }
