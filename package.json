@@ -11,7 +11,10 @@
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.2.0",
     "framer-motion": "^14.7.1",
+    "install": "^0.13.0",
     "lucide-react": "^0.460.0",
+    "lz-string": "^1.5.0",
+    "npm": "^11.21.1",
     "qr-scanner": "^1.4.2",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",

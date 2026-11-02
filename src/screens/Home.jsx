@@ -7,6 +7,7 @@ import PairReceive from "./PairReceive.jsx";
 
 export default function Home({
   screen = "home",
+  peer, // NEW
   onSend,
   onReceive,
   onConnected,
@@ -58,9 +59,13 @@ export default function Home({
             className="w-full max-w-md 2xl:max-w-xl"
           >
             {tab === "send" ? (
-              <PairSend onBack={onSend} onConnected={onConnected} />
+              <PairSend peer={peer} onBack={onSend} onConnected={onConnected} /> // CHANGED
             ) : (
-              <PairReceive onBack={onSend} onConnected={onConnected} />
+              <PairReceive
+                peer={peer}
+                onBack={onSend}
+                onConnected={onConnected}
+              /> // CHANGED
             )}
           </motion.section>
         </AnimatePresence>
@@ -73,7 +78,7 @@ export default function Home({
         aria-expanded={headerOpen}
         onClick={() => setHeaderOpen((v) => !v)}
         whileTap={reduceMotion ? undefined : { scale: 0.92 }}
-        className="fixed right-4 top-[calc(env(safe-area-inset-top)+0.75rem)] z-30 grid size-12 place-items-center rounded-2xl border border-line bg-paper/80 text-ink shadow-lg shadow-ink/10 backdrop-blur-md sm:right-6 2xl:right-10 2xl:top-[calc(env(safe-area-inset-top)+1.5rem)] 2xl:size-16"
+        className="fixed right-4 top-[calc(env(safe-area-inset-top)+0.75rem)] z-30 grid size-12 place-items-center rounded-2xl border border-line bg-paper text-ink shadow-md shadow-ink/10 backdrop-blur-md sm:right-6 2xl:right-10 2xl:top-[calc(env(safe-area-inset-top)+1.5rem)] 2xl:size-16"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react"; // CHANGED: added useEffect
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { QrCode, ScanLine } from "lucide-react";
+import { QrCode, RotateCw, ScanLine } from "lucide-react"; // CHANGED: added RotateCw
 import QRDisplay from "../components/QRDisplay.jsx";
 import QRScanner from "../components/QRScanner.jsx";
 import Button from "../components/ui/Button.jsx";
@@ -22,12 +22,32 @@ const STEPS = [
   },
 ];
 
-// Replace with the compressed WebRTC offer from your connection hook.
-const OFFER_PLACEHOLDER = "offline-share:offer:placeholder";
+// NEW: picks the status text from the connection state
+function statusLabel({ status, error }, scanning) {
+  if (error) return error;
+  if (status === "preparing") return "Creating your code";
+  if (status === "connecting") return "Connecting";
+  return scanning
+    ? "Looking for their reply code"
+    : "Waiting for the other phone";
+}
 
-export default function PairSend({ onConnected }) {
+// CHANGED: receives `peer` from App. onConnected now only serves the dev skip button
+export default function PairSend({ peer, onConnected }) {
   const [scanning, setScanning] = useState(false);
   const reduceMotion = useReducedMotion();
+  const { createOffer, acceptAnswer, localCode, status } = peer; // NEW
+
+  // NEW: build the offer code as soon as this screen opens
+  useEffect(() => {
+    createOffer();
+  }, [createOffer]);
+
+  // NEW: after a failure, return to the QR view and build a fresh code
+  const retry = () => {
+    setScanning(false);
+    createOffer();
+  };
 
   return (
     <div className="flex flex-col items-center gap-6 2xl:gap-8">
@@ -43,10 +63,10 @@ export default function PairSend({ onConnected }) {
             className="size-full"
           >
             {scanning ? (
-              <QRScanner onScan={onConnected} />
+              <QRScanner onScan={acceptAnswer} /> // CHANGED: reads the receiver's reply code
             ) : (
               <QRDisplay
-                value={OFFER_PLACEHOLDER}
+                value={localCode} // CHANGED: the real offer instead of the placeholder
                 caption="Ask the other phone to scan this code"
               />
             )}
@@ -62,16 +82,23 @@ export default function PairSend({ onConnected }) {
           )}
           <span className="relative inline-flex size-full rounded-full bg-accent-strong" />
         </span>
-        {scanning
-          ? "Looking for their reply code"
-          : "Waiting for the other phone"}
+        {statusLabel(peer, scanning)} {/* CHANGED: was a fixed ternary */}
       </p>
 
       <div className="w-full max-w-sm space-y-4 2xl:max-w-xl 2xl:space-y-5">
         <PairProgress steps={STEPS} current={scanning ? 1 : 0} />
 
-        <Button full onClick={() => setScanning((s) => !s)}>
-          {scanning ? (
+        {/* CHANGED: disabled until the code exists, and retries after a failure */}
+        <Button
+          full
+          disabled={!localCode && status !== "failed"}
+          onClick={status === "failed" ? retry : () => setScanning((s) => !s)}
+        >
+          {status === "failed" ? (
+            <>
+              <RotateCw className="size-5" /> Try again
+            </>
+          ) : scanning ? (
             <>
               <QrCode className="size-5" /> Show my code again
             </>
