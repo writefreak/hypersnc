@@ -32,7 +32,7 @@ export default function PairSend({ onConnected }) {
   return (
     <div className="flex flex-col items-center gap-6 2xl:gap-8">
       {/* Code or camera */}
-      <div className="relative aspect-square w-full max-w-72 overflow-hidden rounded-[2rem] border-2 border-ink bg-white p-3 shadow-xl shadow-ink/10 sm:max-w-80 2xl:max-w-[28rem] 2xl:rounded-[2.5rem] 2xl:p-5">
+      <div className="relative aspect-square w-full max-w-72 overflow-hidden rounded-[2rem] border-2 border-paper bg-white p-3 shadow-xl shadow-ink/10 sm:max-w-80 2xl:max-w-[28rem] 2xl:rounded-[2.5rem] 2xl:p-5">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={scanning ? "scan" : "show"}
