@@ -12,6 +12,7 @@ export default function useTransfer(channel) {
   const [transfers, setTransfers] = useState(() =>
     !channel && import.meta.env.DEV ? mockTransfers : [],
   );
+  const [open, setOpen] = useState(() => channel?.readyState === "open");
   const queueRef = useRef([]); // files waiting to be sent: { id, file }
   const sendingRef = useRef(false);
   const cancelledRef = useRef(new Set());
@@ -22,6 +23,24 @@ export default function useTransfer(channel) {
       list.map((t) => (t.id === id ? { ...t, ...changes } : t)),
     );
   }, []);
+
+  // Track whether the channel is actually usable
+  useEffect(() => {
+    if (!channel) {
+      setOpen(false);
+      return;
+    }
+    const sync = () => setOpen(channel.readyState === "open");
+    sync();
+    channel.addEventListener("open", sync);
+    channel.addEventListener("close", sync);
+    channel.addEventListener("error", sync);
+    return () => {
+      channel.removeEventListener("open", sync);
+      channel.removeEventListener("close", sync);
+      channel.removeEventListener("error", sync);
+    };
+  }, [channel]);
 
   // Receiving
   useEffect(() => {
@@ -178,5 +197,5 @@ export default function useTransfer(channel) {
     [patch],
   );
 
-  return { transfers, addFiles, cancel, canSend: Boolean(channel) };
+  return { transfers, addFiles, cancel, canSend: open };
 }
