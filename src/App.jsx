@@ -116,3 +116,7 @@ export default function App() {
   const isTool = window.location.pathname.startsWith(TOOL_PATH);
   return isTool ? <Tool /> : <Landing />;
 }
+
+// export default function App() {
+//   return <Transfer onDisconnect={() => {}} />; // DEV ONLY
+// }
