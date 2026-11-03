@@ -50,6 +50,8 @@ function statusText({ status, progress, speed }) {
   return status === "cancelled" ? "Cancelled" : "Failed";
 }
 
+// console.log("Transfer channel:", channel, channel?.readyState);
+
 function FloatingControls({ onBack }) {
   const [open, setOpen] = useState(false);
   const reduceMotion = useReducedMotion();

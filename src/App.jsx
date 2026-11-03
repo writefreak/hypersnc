@@ -98,7 +98,7 @@ function Tool() {
   }, [status, goHome]);
 
   if (screen === "transfer") {
-    return <Transfer onDisconnect={goHome} />;
+    return <Transfer onDisconnect={goHome} channel={peer.channel} />;
   }
 
   return (

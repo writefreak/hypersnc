@@ -127,13 +127,13 @@ export default function Benefits() {
         alt=""
         aria-hidden="true"
         style={{ y: bgY }}
-        className="absolute inset-x-0 -top-[20%] -z-20 h-[140%] w-full object-cover object-center opacity-20 will-change-transform"
+        className="absolute inset-x-0 top-[-20%] -z-20 h-[140%] w-full object-cover object-center opacity-40 md:opacity-20 will-change-transform"
       />
 
       {/* Left to right fade of the old background color */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-[#E9EEFB] via-[#E9EEFB]/80 to-transparent"
+        className="absolute inset-0 -z-10 bg-linear-to-r from-[#E9EEFB] via-[#E9EEFB]/80 to-transparent"
       />
 
       <Container className="space-y-12 2xl:space-y-16">
