@@ -3,6 +3,7 @@ import { makeId, percent, sendFile } from "../lib/file-transfer.js";
 import { mockTransfers } from "../data/mockTransfers.js";
 
 const UI_INTERVAL_MS = 120; // limit re-renders, since chunks arrive thousands of times
+const ACK_TIMEOUT_MS = 20_000; // how long the sender waits for the receiver to confirm
 
 const speedOf = (bytes, startedAt) =>
   bytes / Math.max((performance.now() - startedAt) / 1000, 0.001);
@@ -17,6 +18,7 @@ export default function useTransfer(channel) {
   const sendingRef = useRef(false);
   const cancelledRef = useRef(new Set());
   const incomingRef = useRef(null); // the file currently being received
+  const acksRef = useRef(new Map()); // file id -> function that settles its delivery wait
 
   const patch = useCallback((id, changes) => {
     setTransfers((list) =>
@@ -46,6 +48,11 @@ export default function useTransfer(channel) {
   useEffect(() => {
     if (!channel) return;
     channel.binaryType = "arraybuffer";
+
+    const reply = (t, id) => {
+      if (channel.readyState === "open")
+        channel.send(JSON.stringify({ t, id }));
+    };
 
     const startReceive = ({ id, name, size, mime }) => {
       incomingRef.current = {
@@ -91,13 +98,16 @@ export default function useTransfer(channel) {
       const current = incomingRef.current;
       if (!current || current.id !== id) return;
       incomingRef.current = null;
-      if (current.received !== current.size)
+      if (current.received !== current.size) {
+        reply("nack", id);
         return patch(id, { status: "failed", speed: 0 });
+      }
 
       const blob = new Blob(current.chunks, {
         type: current.mime || "application/octet-stream",
       });
       patch(id, { status: "done", progress: 100, speed: 0, blob });
+      reply("ack", id); // tells the sender the whole file arrived
     };
 
     const abortReceive = (id) => {
@@ -111,11 +121,14 @@ export default function useTransfer(channel) {
       if (message.t === "meta") startReceive(message);
       else if (message.t === "end") finishReceive(message.id);
       else if (message.t === "cancel") abortReceive(message.id);
+      else if (message.t === "ack") acksRef.current.get(message.id)?.(true);
+      else if (message.t === "nack") acksRef.current.get(message.id)?.(false);
     };
 
     const onClose = () => {
       if (incomingRef.current)
         patch(incomingRef.current.id, { status: "failed", speed: 0 });
+      acksRef.current.forEach((settle) => settle(false)); // stop waiting on a dead channel
     };
 
     channel.addEventListener("message", onMessage);
@@ -125,6 +138,21 @@ export default function useTransfer(channel) {
       channel.removeEventListener("close", onClose);
     };
   }, [channel, patch]);
+
+  // Resolves true when the receiver confirms the file, false on refusal or timeout
+  const waitForAck = useCallback(
+    (id) =>
+      new Promise((resolve) => {
+        const settle = (ok) => {
+          clearTimeout(timer);
+          acksRef.current.delete(id);
+          resolve(ok);
+        };
+        const timer = setTimeout(() => settle(false), ACK_TIMEOUT_MS);
+        acksRef.current.set(id, settle);
+      }),
+    [],
+  );
 
   // Sending: files go out one at a time, in the order they were added
   const pump = useCallback(async () => {
@@ -139,6 +167,7 @@ export default function useTransfer(channel) {
 
       try {
         const outcome = await sendFile(channel, id, file, {
+          waitForAck,
           isCancelled: () => cancelledRef.current.has(id),
           onProgress: (sent) => {
             const now = performance.now();
@@ -150,19 +179,19 @@ export default function useTransfer(channel) {
             });
           },
         });
-        patch(
-          id,
-          outcome === "done"
-            ? { status: "done", progress: 100, speed: 0 }
-            : { status: "cancelled", speed: 0 },
-        );
+        const finished = {
+          done: { status: "done", progress: 100, speed: 0 },
+          cancelled: { status: "cancelled", speed: 0 },
+          failed: { status: "failed", speed: 0 },
+        };
+        patch(id, finished[outcome]);
       } catch {
         patch(id, { status: "failed", speed: 0 });
       }
     }
 
     sendingRef.current = false;
-  }, [channel, patch]);
+  }, [channel, patch, waitForAck]);
 
   const addFiles = useCallback(
     (files) => {

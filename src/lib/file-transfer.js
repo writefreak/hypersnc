@@ -26,7 +26,13 @@ function waitForDrain(channel) {
 
 // Protocol: one "meta" message, then binary chunks, then one "end" message.
 // The channel is ordered and reliable, so the receiver can rebuild the file in order.
-export async function sendFile(channel, id, file, { onProgress, isCancelled }) {
+// After "end", the receiver replies with "ack" (it got everything) or "nack" (it did not).
+export async function sendFile(
+  channel,
+  id,
+  file,
+  { onProgress, isCancelled, waitForAck }, // CHANGED: added waitForAck
+) {
   channel.send(
     JSON.stringify({
       t: "meta",
@@ -57,8 +63,11 @@ export async function sendFile(channel, id, file, { onProgress, isCancelled }) {
     onProgress(offset);
   }
 
+  // CHANGED: only report "done" once the receiver confirms the whole file arrived.
+  // The listener is set up before "end" is sent, so a fast reply cannot be missed.
+  const acked = waitForAck(id);
   channel.send(JSON.stringify({ t: "end", id }));
-  return "done";
+  return (await acked) ? "done" : "failed";
 }
 
 const isIOS = () =>
