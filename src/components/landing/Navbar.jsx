@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Menu, Share2, X } from "lucide-react";
 import Container from "../layout/Container.jsx";
 import { TOOL_PATH } from "../../config.js";
+import hypersnc from "../../public/hypersnc.png";
 
 const LINKS = [
   { label: "How it works", href: "#how-it-works" },
@@ -43,10 +44,13 @@ export default function Navbar() {
               href="/"
               className="flex items-center gap-2.5 text-lg font-extrabold text-ink 2xl:text-xl"
             >
-              <span className="grid size-9 place-items-center rounded-full bg-accent-strong text-white 2xl:size-10">
-                <Share2 className="size-4 2xl:size-5" strokeWidth={2.5} />
-              </span>
-              Offline Share
+              <div className="md:h-33 h-22 w-full">
+                <img
+                  src={hypersnc}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </a>
 
             {/* Desktop pill nav */}
